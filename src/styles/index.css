@@ -1,0 +1,454 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ tokens */
+@theme {
+  --color-obsidian: #09090b;
+  --color-charcoal: #121218;
+  --color-graphite: #1b1b25;
+  --color-soft: #f8f7fc;
+  --color-muted: #a7a7b4;
+  --color-line: rgb(248 247 252 / 0.12);
+
+  --color-magenta: #ff168f;
+  --color-cyan: #00d9ff;
+  --color-blue: #335cff;
+  --color-violet: #8b4dff;
+  --color-orange: #ff781f;
+  --color-yellow: #ffd13d;
+
+  --font-display: 'Syne Variable', 'Syne', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --ease-cinema: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-swift: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --breakpoint-xs: 26rem;
+}
+
+:root {
+  --gutter: clamp(1rem, 5vw, 4.5rem);
+  --section-y: clamp(3.5rem, 8vw, 9rem);
+  --header-h: 5.5rem;
+
+  --grad-aurora: linear-gradient(100deg, #ff168f 0%, #8b4dff 48%, #00d9ff 100%);
+  --grad-sunset: linear-gradient(100deg, #ffd13d 0%, #ff781f 45%, #ff168f 100%);
+  --grad-ocean: linear-gradient(100deg, #335cff 0%, #00d9ff 50%, #8b4dff 100%);
+  --grad-spectrum: linear-gradient(
+    100deg,
+    #ffd13d 0%,
+    #ff781f 18%,
+    #ff168f 38%,
+    #8b4dff 60%,
+    #335cff 78%,
+    #00d9ff 100%
+  );
+
+  color-scheme: dark;
+}
+
+/* ------------------------------------------------------------------ base */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    @apply bg-obsidian text-soft font-sans antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-magenta);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
+
+/* ------------------------------------------------------------------ layout */
+@utility container-x {
+  width: 100%;
+  max-width: 96rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility section-y {
+  padding-block: var(--section-y);
+}
+
+/* Full-bleed: sections that must touch screen edges (no container) */
+@utility full-bleed {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* Safe-area padding for devices with notches / home-bar */
+@utility safe-x {
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+}
+
+/* ------------------------------------------------------------------ type */
+@utility display-hero {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(2rem, 7.2vw, 8.5rem);
+  line-height: 0.93;
+  letter-spacing: -0.035em;
+}
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(1.85rem, 5.6vw, 6.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(1.9rem, 4vw, 4.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
+
+@utility display-giant {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(1.85rem, 9.4vw, 10.5rem);
+  line-height: 0.91;
+  letter-spacing: -0.045em;
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+@utility lede {
+  font-size: clamp(1.075rem, 1.35vw, 1.3rem);
+  line-height: 1.65;
+  color: var(--color-muted);
+  max-width: min(36rem, 90vw);
+}
+
+@utility serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+
+@utility text-outline {
+  -webkit-text-stroke: 1.2px currentColor;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ------------------------------------------------------------------ gradients */
+@utility text-gradient {
+  background-image: var(--grad, var(--grad-aurora));
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@utility bg-aurora {
+  background-image: var(--grad-aurora);
+}
+@utility bg-sunset {
+  background-image: var(--grad-sunset);
+}
+@utility bg-ocean {
+  background-image: var(--grad-ocean);
+}
+@utility bg-spectrum {
+  background-image: var(--grad-spectrum);
+}
+
+@utility hairline {
+  height: 1px;
+  background: var(--color-line);
+}
+
+@utility grad-border {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--grad, var(--grad-spectrum));
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+/* ------------------------------------------------------------------ texture */
+.film-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.grid-lines {
+  background-image: linear-gradient(to right, rgb(248 247 252 / 0.045) 1px, transparent 1px);
+  background-size: calc((min(100vw, 96rem) - 2 * var(--gutter)) / 6) 100%;
+  background-position: center;
+}
+
+/* ------------------------------------------------------------------ motion */
+@keyframes gradient-pan {
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes rec-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.animate-gradient {
+  animation: gradient-pan 7s linear infinite;
+}
+.animate-spin-slow {
+  animation: spin-slow 60s linear infinite;
+}
+.animate-spin-slower {
+  animation: spin-slow 120s linear infinite reverse;
+}
+.animate-float {
+  animation: float-y var(--float-dur, 9s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+.animate-scroll-cue {
+  animation: scroll-cue 2.2s var(--ease-swift) infinite;
+}
+.animate-rec {
+  animation: rec-pulse 1.6s steps(2) infinite;
+}
+.animate-marquee {
+  animation: marquee 48s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-gradient,
+  .animate-spin-slow,
+  .animate-spin-slower,
+  .animate-float,
+  .animate-scroll-cue,
+  .animate-rec,
+  .animate-marquee {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ forms */
+.field-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgb(248 247 252 / 0.22);
+  padding: 0.85rem 0;
+  font-size: 1.0625rem;
+  color: var(--color-soft);
+  border-radius: 0;
+  transition: border-color 0.3s var(--ease-cinema);
+}
+.field-input::placeholder {
+  color: rgb(167 167 180 / 0.6);
+}
+.field-input:hover {
+  border-bottom-color: rgb(248 247 252 / 0.4);
+}
+.field-input:focus {
+  outline: none;
+  border-bottom-color: var(--color-cyan);
+}
+.field-input:focus-visible {
+  outline: none;
+  box-shadow: 0 1px 0 0 var(--color-cyan);
+}
+.field-input[aria-invalid='true'] {
+  border-bottom-color: #ff5c8a;
+}
+select.field-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23A7A7B4' stroke-width='1.6'%3E%3Cpath d='m2 5 5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.25rem center;
+  padding-right: 2rem;
+}
+select.field-input option,
+select.field-input optgroup {
+  background: var(--color-charcoal);
+  color: var(--color-soft);
+}
+
+/* Legal prose */
+.legal-prose h2 {
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+.legal-prose p,
+.legal-prose li {
+  color: rgb(248 247 252 / 0.78);
+  line-height: 1.8;
+}
+.legal-prose p + p,
+.legal-prose p + ul,
+.legal-prose ul + p {
+  margin-top: 1rem;
+}
+.legal-prose ul {
+  list-style: none;
+  padding: 0;
+}
+.legal-prose li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+.legal-prose li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  width: 0.6rem;
+  height: 1px;
+  background: var(--grad-aurora);
+}
+.legal-prose a {
+  color: var(--color-cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------ responsive helpers */
+
+/* Extra-small phones (< 26rem / 416px): tighten body font, reduce section spacing */
+@media (max-width: 25.99rem) {
+  :root {
+    --gutter: 1rem;
+    --section-y: 3rem;
+  }
+  body {
+    font-size: 1rem;
+  }
+}
+
+/* Tablet landscape (768px – 1023px): balanced gutters */
+@media (min-width: 48rem) and (max-width: 63.99rem) {
+  :root {
+    --gutter: clamp(1.5rem, 4vw, 3rem);
+  }
+}
+
+/* Ultra-wide (>= 1920px): grow gutters so content doesn't float in white space */
+@media (min-width: 120rem) {
+  :root {
+    --gutter: clamp(4rem, 6vw, 8rem);
+    --section-y: clamp(7rem, 6vw, 10rem);
+  }
+}
+
+/* Touchscreen: remove fine-pointer-only hover states from animations */
+@media (hover: none) and (pointer: coarse) {
+  .field-input:hover {
+    border-bottom-color: rgb(248 247 252 / 0.22);
+  }
+}
