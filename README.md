@@ -1,0 +1,148 @@
+# VKS Film Production — Website
+
+Cinematic liquid-art website for **VKS FILM PRODUCTION** — _Creating Magic on Screen_.
+
+React 19 · Vite 8 · Tailwind CSS 4 · React Router 7 · Motion for React · GSAP + ScrollTrigger · Lucide React
+
+## Quick start
+
+```bash
+npm install
+npm run dev       # http://localhost:5173
+npm run build     # production build → dist/
+npm run preview   # serve the production build locally
+```
+
+Node 20+ is recommended.
+
+## Pages
+
+| Route                   | Page               |
+| ----------------------- | ------------------ |
+| `/`                     | Home               |
+| `/about`                | About Us           |
+| `/services`             | Services           |
+| `/contact`              | Contact Us         |
+| `/privacy-policy`       | Privacy Policy     |
+| `/terms-and-conditions` | Terms & Conditions |
+
+The main navigation shows Home, About Us, Services and Contact. The legal pages are linked from the footer. The portfolio, galleries and trailers live on the Home page (project dialog and showreel), not on separate routes.
+
+## Editing content
+
+All content is static data. You don't need to touch any components to update it.
+
+| What                                                          | Where                       |
+| ------------------------------------------------------------- | --------------------------- |
+| Company name, producer, phone, email, WhatsApp, social links, showreel video | `src/data/siteConfig.js` |
+| Featured productions (posters, stills, trailers)              | `src/data/projects.js`      |
+| Services, inquiry types, process steps                        | `src/data/services.js`      |
+| Route list (also used for `sitemap.xml`)                      | `src/data/routes.js`        |
+
+### Official logo
+
+Put the client's supplied logo file in `src/assets/branding/` and name it `logo.png`, `logo.svg` or `logo.webp`. It replaces the temporary typographic wordmark everywhere automatically, displayed unmodified. See `src/assets/branding/README.md`.
+
+### Showreel and trailers
+
+Set `showreelYoutubeId` in `siteConfig.js`, and `youtubeId` per project in `projects.js`. Use the ID only (the part after `v=`). Videos load from `youtube-nocookie.com` and only after the visitor presses play. With no ID, a clearly labelled "coming soon" placeholder is shown instead.
+
+### Draft notices
+
+`siteConfig.showDraftNotices` is `true` while content is pending client approval. It shows small yellow markers next to:
+
+- proposed services and the proposed process
+- editorial copy
+- the producer introduction
+- the legal drafts, including inline `[Review: …]` notes
+
+Set it to `false` only after everything has been approved.
+
+## Environment variables
+
+Copy `.env.example` to `.env`. Both variables are optional.
+
+| Variable             | Purpose                                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `VITE_SITE_URL`      | Production URL, e.g. `https://www.example.com`. Enables canonical URLs, absolute `og:url` and `og:image`, and generates `sitemap.xml` at build time. |
+| `VITE_FORM_ENDPOINT` | Optional JSON form service, e.g. Formspree. Leave empty to use the mailto hand-off.                         |
+
+## Contact form
+
+- **Default (no backend):** the form validates input, then opens the visitor's own email app with the message prepared, addressed to the company email. The page says plainly that nothing has been sent yet and offers a "copy message" fallback. It never claims the message was sent.
+- **Optional form service:** when `VITE_FORM_ENDPOINT` is set, the form sends JSON to that service. A success message appears only after the service returns an OK response. If you enable this, update the Privacy Policy section "Contact Form and Email Communications".
+- **Spam prevention:** a hidden honeypot field (`company_website`) is already included. If you move to a server-backed integration, add server-side validation and rate limiting, and consider Cloudflare Turnstile or hCaptcha.
+- Links to `/contact?inquiry=<service-slug>` preselect the inquiry type.
+
+## Deployment
+
+The site is a single-page app, so the host must serve `index.html` for every route. Fallback configuration is included for common hosts:
+
+| Host                         | File                                    |
+| ---------------------------- | --------------------------------------- |
+| Netlify                      | `public/_redirects`                     |
+| Vercel                       | `vercel.json`                           |
+| Apache / cPanel shared hosting | `public/.htaccess` (copied into `dist/`) |
+
+For Nginx, add `try_files $uri $uri/ /index.html;`.
+
+Steps:
+
+1. Set `VITE_SITE_URL` to the confirmed domain.
+2. Run `npm run build`.
+3. Upload the contents of `dist/`.
+4. Make sure HTTPS is enabled.
+
+## Artwork
+
+All paint, fluid and liquid artwork is **original procedural artwork** generated by `scripts/generate-artwork.py` in the brand palette. It is not stock photography and not client work. To regenerate it (requires Python 3, numpy and Pillow):
+
+```bash
+python scripts/generate-artwork.py            # everything
+python scripts/generate-artwork.py hero cta   # only matching recipes
+```
+
+## Pre-launch checklist
+
+- [ ] Add the official logo to `src/assets/branding/`.
+- [ ] Replace all six demo productions in `src/data/projects.js` with real posters, stills, titles, descriptions and trailers, then set `isDemo: false`.
+- [ ] Add the showreel YouTube ID.
+- [ ] Confirm the service list, service descriptions and creative process.
+- [ ] Approve the editorial copy (Home introduction, About story and philosophy, producer introduction).
+- [ ] Add a producer portrait, if one will be supplied. Until then the producer section is typographic by design.
+- [ ] Confirm the social platform and URL for "@VKSFilm Production", then add it to `siteConfig.social`.
+- [ ] Confirm the email address `vksfilm@mailproduction.com` is correct and monitored.
+- [ ] Have the Privacy Policy and Terms & Conditions reviewed. Resolve every `[Review: …]` note: legal entity, address, hosting provider, governing law, retention period.
+- [ ] Replace `public/og-image.jpg` with an approved social preview image that uses the official logo.
+- [ ] Set `VITE_SITE_URL` and rebuild, which generates the sitemap and canonical URLs.
+- [ ] Set `showDraftNotices: false`.
+
+## Project structure
+
+```
+src/
+  assets/        branding/ (logo slot), artwork/, services/, project-posters/
+  components/
+    layout/      Header, MobileMenu, Footer, PageTransition, ScrollToTop
+    common/      AnimatedHeading, Reveal, SectionHeading, GradientText, PaintArtwork,
+                 PrimaryButton, MagneticButton, Dialog, VideoModal, ProjectModal,
+                 PageHero, LegalLayout, ApertureMark, BrandLogo, Seo, DraftNote
+    home/        Hero, Introduction, FeaturedWorks, ColorStatement, ServicesPreview,
+                 Showreel, WhyChooseUs, CreativeSignature, ContactCTA
+    contact/     ContactForm
+  pages/         Home, About, Services, Contact, PrivacyPolicy, TermsConditions
+  data/          siteConfig, routes, projects, services, artwork, accents
+  hooks/         useReducedMotion, useDialog
+  lib/           gsap (plugin registration), youtube
+  styles/        index.css (design tokens and utilities)
+```
+
+## Motion and accessibility notes
+
+- Component reveals use Motion. Scroll scenes (parallax, wipes, masks) use GSAP ScrollTrigger inside `gsap.matchMedia`, so they are skipped entirely when the visitor prefers reduced motion. Every animation is reverted on unmount.
+- Dialogs and the mobile menu trap focus, close on Escape, lock page scroll and return focus to the element that opened them.
+- There is a skip link, visible focus styles, labelled form fields with linked error messages, and decorative artwork is hidden from assistive technology.
+- Fonts (Syne, Manrope, Instrument Serif) are self-hosted through Fontsource, so no requests go to third-party font servers.
+#   V K S - F L I M - P R O D U C T I O N  
+ #   V K S - F L I M - P R O D U C T I O N  
+ 
