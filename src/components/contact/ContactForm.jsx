@@ -1,7 +1,7 @@
 import { useId, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { AlertCircle, Check, Copy, Loader2, Mail, Send } from 'lucide-react'
+import { AlertCircle, Check, Loader2, Mail, Send } from 'lucide-react'
 import { inquiryTypes } from '../../data/services'
 import { filmRoleGroups, filmRoles } from '../../data/filmRoles'
 import { mailtoHref, siteConfig } from '../../data/siteConfig'
@@ -69,17 +69,12 @@ function Field({ id, label, optional, error, hint, children }) {
 }
 
 /**
- * Contact form — frontend only.
+ * Contact form — posts JSON to the Vercel serverless function in api/contact.js, which validates
+ * the message again server-side and emails it to the owner with nodemailer.
  *
- * Default: mailto hand-off. The visitor's own email app opens with the message prepared;
- * nothing is sent or stored by this website, so we never claim it was "sent".
- *
- * Optional: set VITE_FORM_ENDPOINT to a JSON form service (e.g. Formspree). Success is only
- * shown when that service responds OK.
- *
- * Spam prevention for a future server-backed integration: keep the honeypot field
- * (company_website), add server-side validation + rate limiting, and consider a privacy-friendly
- * challenge such as Cloudflare Turnstile or hCaptcha. Never rely on client-side checks alone.
+ * Success is only shown when the endpoint responds OK. The honeypot field (company_website) is
+ * kept for bots; the server also rate-limits. For stronger spam protection consider a
+ * privacy-friendly challenge such as Cloudflare Turnstile or hCaptcha.
  */
 export default function ContactForm() {
   const [params] = useSearchParams()
@@ -88,7 +83,6 @@ export default function ContactForm() {
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
   const [status, setStatus] = useState({ state: 'idle' })
-  const [copied, setCopied] = useState(false)
   const formRef = useRef(null)
   const uid = useId()
   const id = (n) => `${uid}-${n}`
@@ -131,44 +125,27 @@ export default function ContactForm() {
 
     const { subject, body, label } = composeEmail(values)
 
-    if (endpoint) {
-      setStatus({ state: 'sending' })
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            name: values.name.trim(),
-            role: currentRole(values),
-            email: values.email.trim(),
-            phone: values.phone.trim(),
-            inquiry: label,
-            message: values.message.trim(),
-            _subject: subject,
-            _gotcha: values.company_website,
-          }),
-        })
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        setStatus({ state: 'sent' })
-        setValues(empty)
-        setTouched({})
-      } catch {
-        setStatus({ state: 'error', subject, body })
-      }
-      return
-    }
-
-    setStatus({ state: 'mailto', subject, body })
-    window.location.href = mailtoHref(subject, body)
-  }
-
-  const copyMessage = async () => {
+    setStatus({ state: 'sending' })
     try {
-      await navigator.clipboard.writeText(`To: ${siteConfig.contact.email}\nSubject: ${status.subject}\n\n${status.body}`)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2500)
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: values.name.trim(),
+          role: currentRole(values),
+          email: values.email.trim(),
+          phone: values.phone.trim(),
+          inquiry: label,
+          message: values.message.trim(),
+          company_website: values.company_website,
+        }),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      setStatus({ state: 'sent' })
+      setValues(empty)
+      setTouched({})
     } catch {
-      setCopied(false)
+      setStatus({ state: 'error', subject, body })
     }
   }
 
@@ -238,14 +215,7 @@ export default function ContactForm() {
 
       <p id={id('how')} className="mt-9 flex items-start gap-3 text-sm leading-relaxed text-muted">
         <Mail className="mt-0.5 size-4 shrink-0 text-cyan" aria-hidden="true" />
-        {endpoint ? (
-          <span>Your message is delivered through our secure form service. We&rsquo;ll only use your details to reply to you.</span>
-        ) : (
-          <span className="min-w-0 [overflow-wrap:anywhere]">
-            Pressing <strong className="font-semibold text-soft">Send message</strong> opens your own email app with your message ready
-            to send to {siteConfig.contact.email}. Nothing is sent or stored by this website.
-          </span>
-        )}
+        <span>Your message is emailed straight to our team. We&rsquo;ll only use your details to reply to you.</span>
       </p>
 
       <div className="mt-8 flex flex-wrap items-center gap-5">
@@ -269,33 +239,6 @@ export default function ContactForm() {
             <motion.p key="invalid" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-sm text-[#ff7aa2]">
               Please fix the {status.count === 1 ? 'highlighted field' : `${status.count} highlighted fields`} and try again.
             </motion.p>
-          )}
-          {status.state === 'mailto' && (
-            <motion.div
-              key="mailto"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="rounded-2xl border border-cyan/30 bg-cyan/[0.06] p-5 text-sm leading-relaxed"
-            >
-              <p className="font-semibold text-soft">Your email app should now be open with your message ready.</p>
-              <p className="mt-2 text-muted">
-                Your message hasn&rsquo;t been sent yet &mdash; please review it and press Send in your email app. If nothing opened,
-                email us directly at{' '}
-                <a className="text-cyan underline underline-offset-4" href={`mailto:${siteConfig.contact.email}`}>
-                  {siteConfig.contact.email}
-                </a>{' '}
-                or copy your message below.
-              </p>
-              <button
-                type="button"
-                onClick={copyMessage}
-                className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-soft/20 px-4 text-xs font-bold uppercase tracking-[0.16em] transition-colors hover:border-soft"
-              >
-                {copied ? <Check className="size-4 text-cyan" aria-hidden="true" /> : <Copy className="size-4" aria-hidden="true" />}
-                {copied ? 'Copied' : 'Copy message'}
-              </button>
-            </motion.div>
           )}
           {status.state === 'sent' && (
             <motion.p

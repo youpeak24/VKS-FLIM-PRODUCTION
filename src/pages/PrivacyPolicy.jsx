@@ -4,7 +4,6 @@ import LegalLayout, { Review } from '../components/common/LegalLayout'
 import { siteConfig } from '../data/siteConfig'
 
 const { contact, name } = siteConfig
-const hasFormService = Boolean(siteConfig.formEndpoint)
 
 const sections = [
   {
@@ -64,26 +63,15 @@ const sections = [
   {
     id: 'contact-form',
     title: 'Contact Form and Email Communications',
-    content: hasFormService ? (
+    content: (
       <>
         <p>
-          When you submit the contact form, your details are transmitted to a third-party form-processing service, which forwards
-          them to us by email. That service processes the data on our behalf.
+          When you press &ldquo;Send message&rdquo;, the details you entered are sent securely to our website server, which emails
+          them to us so we can reply. We do not keep a copy of your message on the website; it is held in our email inbox and
+          handled according to our email provider&rsquo;s privacy practices as well as this policy.
         </p>
         <p>
-          <Review>name the form service used and link to its privacy policy</Review>
-        </p>
-      </>
-    ) : (
-      <>
-        <p>
-          The contact form on this website does not send or store your message itself. When you press &ldquo;Send message&rdquo;,
-          the form opens your own email application with your message prepared. Nothing is sent until you choose to send it from
-          your email app.
-        </p>
-        <p>
-          Your email is then delivered through your email provider and ours, and is handled according to their respective privacy
-          practices as well as this policy.
+          <Review>name the email provider used to receive enquiries and link to its privacy policy</Review>
         </p>
       </>
     ),

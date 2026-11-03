@@ -43,8 +43,11 @@ export const siteConfig = {
    */
   showreelYoutubeId: '',
 
-  /** Optional JSON form endpoint (see .env.example). Empty = mailto hand-off. */
-  formEndpoint: (env.VITE_FORM_ENDPOINT || '').trim(),
+  /**
+   * Contact form endpoint: the Vercel serverless function in api/contact.js, which emails the
+   * owner via nodemailer. VITE_FORM_ENDPOINT can override it (see .env.example).
+   */
+  formEndpoint: (env.VITE_FORM_ENDPOINT || '/api/contact').trim(),
 
   /**
    * While true, small "draft / pending client review" notes appear next to
