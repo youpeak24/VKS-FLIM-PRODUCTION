@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { siteConfig } from '../../data/siteConfig'
+import { getSeo, ROBOTS_NOINDEX } from '../../data/seo'
 
 function upsert(selector, create) {
   let el = document.head.querySelector(selector)
@@ -11,12 +11,11 @@ function upsert(selector, create) {
 }
 
 function setMeta(attr, key, content) {
-  const el = upsert(`meta[${attr}="${key}"]`, () => {
+  upsert(`meta[${attr}="${key}"]`, () => {
     const m = document.createElement('meta')
     m.setAttribute(attr, key)
     return m
-  })
-  el.setAttribute('content', content)
+  }).setAttribute('content', content)
 }
 
 function removeEl(selector) {
@@ -24,73 +23,53 @@ function removeEl(selector) {
 }
 
 /**
- * Per-route title, description, Open Graph, canonical and JSON-LD.
- * Canonical / og:url / absolute image URLs are only emitted once VITE_SITE_URL is configured.
+ * Keeps <head> in sync on client-side navigation. The same tags are already present in the static
+ * HTML of every route (generated at build time by scripts/vite-seo-plugin.js), so crawlers and social
+ * scrapers that do not run JavaScript see them too.
+ *
+ * Title, description and JSON-LD come from data/routes.js + data/seo.js by `path`.
+ * Pass `noindex` for pages that must stay out of search results (e.g. the 404 page).
  */
-export default function Seo({ title, description, path = '/', noindex = false, jsonLd }) {
+export default function Seo({ path = '/', noindex = false }) {
   useEffect(() => {
-    const full = title ? `${title} | ${siteConfig.name}` : `${siteConfig.name} | ${siteConfig.tagline}`
-    const base = siteConfig.siteUrl
-    document.title = full
+    const seo = getSeo(noindex ? '/__not-found' : path)
 
-    setMeta('name', 'description', description)
-    setMeta('property', 'og:title', full)
-    setMeta('property', 'og:description', description)
-    setMeta('property', 'og:image', `${base}/og-image.jpg`)
-    setMeta('name', 'twitter:title', full)
-    setMeta('name', 'twitter:description', description)
+    document.title = seo.title
+    setMeta('name', 'description', seo.description)
+    setMeta('name', 'robots', noindex ? ROBOTS_NOINDEX : seo.robots)
 
-    if (base) {
-      const url = `${base}${path}`
-      setMeta('property', 'og:url', url)
+    setMeta('property', 'og:title', seo.title)
+    setMeta('property', 'og:description', seo.description)
+    setMeta('property', 'og:image', seo.image)
+    setMeta('property', 'og:image:alt', seo.imageAlt)
+    setMeta('name', 'twitter:title', seo.title)
+    setMeta('name', 'twitter:description', seo.description)
+    setMeta('name', 'twitter:image', seo.image)
+    setMeta('name', 'twitter:image:alt', seo.imageAlt)
+
+    if (seo.canonical) {
+      setMeta('property', 'og:url', seo.url)
       upsert('link[rel="canonical"]', () => {
         const l = document.createElement('link')
         l.rel = 'canonical'
         return l
-      }).href = url
+      }).href = seo.canonical
+    } else {
+      removeEl('link[rel="canonical"]')
+      removeEl('meta[property="og:url"]')
     }
 
-    if (noindex) setMeta('name', 'robots', 'noindex, follow')
-    else removeEl('meta[name="robots"]')
-
-    if (jsonLd) {
-      const s = upsert('script#ld-json', () => {
+    if (seo.jsonLd) {
+      upsert('script#ld-json', () => {
         const el = document.createElement('script')
         el.type = 'application/ld+json'
         el.id = 'ld-json'
         return el
-      })
-      s.textContent = JSON.stringify(jsonLd)
+      }).textContent = JSON.stringify(seo.jsonLd)
+    } else {
+      removeEl('script#ld-json')
     }
-    return () => {
-      if (jsonLd) removeEl('script#ld-json')
-    }
-  }, [title, description, path, noindex, jsonLd])
+  }, [path, noindex])
 
   return null
-}
-
-/**
- * schema.org has no "FilmProduction" type, so the company is described as an Organization
- * using only facts supplied by the client.
- */
-export const organizationJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: siteConfig.legalName,
-  slogan: siteConfig.tagline,
-  email: siteConfig.contact.email,
-  telephone: siteConfig.contact.phoneHref.replace('tel:', ''),
-  ...(siteConfig.siteUrl ? { url: siteConfig.siteUrl } : {}),
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer service',
-    telephone: siteConfig.contact.phoneHref.replace('tel:', ''),
-    email: siteConfig.contact.email,
-  },
-  employee: {
-    '@type': 'Person',
-    name: siteConfig.producer.name,
-    jobTitle: siteConfig.producer.role,
-  },
 }

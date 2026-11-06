@@ -1,13 +1,18 @@
 {
+  "id": "/",
   "name": "VKS Film Production",
   "short_name": "VKS Film",
+  "description": "VKS Film Production — creating magic on screen. Film production, cinematography and visual storytelling.",
+  "lang": "en",
   "start_url": "/",
   "scope": "/",
-  "icons": [
-    { "src": "android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
-  ],
+  "display": "standalone",
+  "orientation": "any",
+  "categories": ["entertainment", "business"],
   "theme_color": "#09090B",
   "background_color": "#09090B",
-  "display": "standalone"
+  "icons": [
+    { "src": "/2/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/2/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
 }

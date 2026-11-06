@@ -1,4 +1,4 @@
-import Seo, { organizationJsonLd } from '../components/common/Seo'
+import Seo from '../components/common/Seo'
 import Hero from '../components/home/Hero'
 import Introduction from '../components/home/Introduction'
 import FeaturedWorks from '../components/home/FeaturedWorks'
@@ -12,11 +12,7 @@ import ContactCTA from '../components/home/ContactCTA'
 export default function Home() {
   return (
     <>
-      <Seo
-        description="VKS Film Production — where powerful ideas, captivating visuals and creative storytelling come together to create unforgettable cinematic experiences."
-        path="/"
-        jsonLd={organizationJsonLd}
-      />
+      <Seo path="/" />
       <Hero />
       <Introduction />
       <FeaturedWorks />

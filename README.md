@@ -37,7 +37,8 @@ All content is static data. You don't need to touch any components to update it.
 | Company name, producer, phone, email, WhatsApp, social links, showreel video | `src/data/siteConfig.js` |
 | Featured productions (posters, stills, trailers)              | `src/data/projects.js`      |
 | Services, inquiry types, process steps                        | `src/data/services.js`      |
-| Route list (also used for `sitemap.xml`)                      | `src/data/routes.js`        |
+| Page titles, meta descriptions, routes (feeds `sitemap.xml`, JSON-LD, social tags) | `src/data/routes.js` |
+| Domain, company facts, social profiles (also feed JSON-LD)    | `src/data/company.js`       |
 
 ### Official logo
 
@@ -60,11 +61,10 @@ Set it to `false` only after everything has been approved.
 
 ## Environment variables
 
-Copy `.env.example` to `.env`. Both variables are optional.
+Copy `.env.example` to `.env`. The variable is optional.
 
 | Variable             | Purpose                                                                                                     |
 | -------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `VITE_SITE_URL`      | Production URL, e.g. `https://www.example.com`. Enables canonical URLs, absolute `og:url` and `og:image`, and generates `sitemap.xml` at build time. |
 | `VITE_FORM_ENDPOINT` | Optional JSON form service, e.g. Formspree. Leave empty to use the mailto hand-off.                         |
 
 ## Contact form
@@ -76,7 +76,7 @@ Copy `.env.example` to `.env`. Both variables are optional.
 
 ## Deployment
 
-The site is a single-page app, so the host must serve `index.html` for every route. Fallback configuration is included for common hosts:
+The site is a React SPA, but the build pre-generates one static HTML file per route (plus `404.html`), so any static host works. Host configuration for clean URLs, the `www` -> apex redirect and a true 404 is included:
 
 | Host                         | File                                    |
 | ---------------------------- | --------------------------------------- |
@@ -84,14 +84,29 @@ The site is a single-page app, so the host must serve `index.html` for every rou
 | Vercel                       | `vercel.json`                           |
 | Apache / cPanel shared hosting | `public/.htaccess` (copied into `dist/`) |
 
-For Nginx, add `try_files $uri $uri/ /index.html;`.
+For Nginx, use `try_files $uri $uri.html $uri/index.html =404;` with `error_page 404 /404.html;` (each route is a real static file, so unknown URLs return a true 404) and 301-redirect `www` to the apex domain.
 
 Steps:
 
-1. Set `VITE_SITE_URL` to the confirmed domain.
-2. Run `npm run build`.
+1. Run `npm run build`.
 3. Upload the contents of `dist/`.
 4. Make sure HTTPS is enabled.
+
+## SEO
+
+The domain is fixed to `https://vksflims.com` (apex, no `www`) in `src/data/company.js`.
+
+`npm run build` post-processes the SPA (`scripts/vite-seo-plugin.js`) so every route is its own static HTML file
+(`dist/about/index.html`, …) containing its own title, description, canonical, Open Graph / Twitter tags,
+schema.org JSON-LD, preload hints and a crawlable `<noscript>` fallback. It also writes `sitemap.xml`
+(`lastmod` comes from git history) and `404.html` (`noindex`). `public/robots.txt` and `public/llms.txt` are static.
+At runtime `src/components/common/Seo.jsx` keeps `<head>` in sync on client-side navigation from the same data.
+
+- Change titles / descriptions in `src/data/routes.js` (titles ≤ ~60 chars, descriptions ≤ ~155).
+- Adding a page: add it to `src/data/routes.js`, add the `<Route>` in `App.jsx`, render `<Seo path="/new-page" />`.
+- Add confirmed social profiles to `social` in `src/data/company.js` — they become JSON-LD `sameAs` automatically.
+- After launch: verify the domain in Google Search Console, submit the sitemap, request indexing of the 4 main
+  pages, and check Rich Results / Schema validator on the home page.
 
 ## Artwork
 
@@ -114,7 +129,7 @@ python scripts/generate-artwork.py hero cta   # only matching recipes
 - [ ] Confirm the email address `vksfilm@mailproduction.com` is correct and monitored.
 - [ ] Have the Privacy Policy and Terms & Conditions reviewed. Resolve every `[Review: …]` note: legal entity, address, hosting provider, governing law, retention period.
 - [ ] Replace `public/og-image.jpg` with an approved social preview image that uses the official logo.
-- [ ] Set `VITE_SITE_URL` and rebuild, which generates the sitemap and canonical URLs.
+- [ ] Submit `https://vksflims.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools (see the SEO section).
 - [ ] Set `showDraftNotices: false`.
 
 ## Project structure

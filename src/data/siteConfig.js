@@ -1,41 +1,27 @@
 import { routes } from './routes.js'
+import { company, SITE_URL } from './company.js'
 
 const env = import.meta.env
 
 /**
- * Single source of truth for company details.
- * Change contact information here — never hard-code it in components.
+ * Single source of truth for company details (see company.js — shared with the build-time SEO plugin).
+ * Change contact information there — never hard-code it in components.
  */
 export const siteConfig = {
-  name: 'VKS Film Production',
-  legalName: 'VKS FILM PRODUCTION',
-  tagline: 'Creating Magic on Screen',
-  description:
-    'VKS Film Production brings powerful ideas, captivating visuals and creative storytelling together to create unforgettable cinematic experiences.',
+  name: company.name,
+  legalName: company.legalName,
+  tagline: company.tagline,
+  description: company.description,
 
-  /** Production domain — set VITE_SITE_URL once the client confirms it. */
-  siteUrl: (env.VITE_SITE_URL || '').trim().replace(/\/$/, ''),
+  /** Production domain (https://vksflims.com), no trailing slash. */
+  siteUrl: SITE_URL,
 
-  producer: {
-    name: 'S. Vijay Krishnan',
-    role: 'Producer',
-  },
+  producer: company.producer,
 
-  contact: {
-    phoneDisplay: '+91 90876 15708',
-    phoneHref: 'tel:+919087615708',
-    email: 'vksfilm@mailproduction.com',
-    whatsappNumber: '919087615708',
-    whatsappMessage:
-      "Hello VKS Film Production, I'd like to talk about a project.",
-  },
+  contact: company.contact,
 
-  /**
-   * Social profiles. Supplied handle: "@VKSFilm Production" — the platform and
-   * profile URL have NOT been confirmed yet, so nothing is rendered.
-   * Add confirmed entries like: { label: 'Instagram', url: 'https://www.instagram.com/…' }
-   */
-  social: [],
+  /** Social profiles — edit in company.js. */
+  social: company.social,
 
   /**
    * Showreel: YouTube video ID (the part after "v=" in a YouTube URL).

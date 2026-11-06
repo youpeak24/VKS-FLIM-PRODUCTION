@@ -141,7 +141,7 @@ const sections = [
 export default function TermsConditions() {
   return (
     <>
-      <Seo title="Terms & Conditions" description={`Terms and conditions for using the ${name} website.`} path="/terms-and-conditions" />
+      <Seo path="/terms-and-conditions" />
       <LegalLayout eyebrow="Legal" title="Terms & Conditions" sections={sections} />
     </>
   )

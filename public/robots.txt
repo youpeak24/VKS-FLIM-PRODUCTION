@@ -1,0 +1,6 @@
+# https://vksflims.com — crawling rules
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://vksflims.com/sitemap.xml

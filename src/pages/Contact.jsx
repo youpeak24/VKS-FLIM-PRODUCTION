@@ -40,11 +40,7 @@ export default function Contact() {
 
   return (
     <>
-      <Seo
-        title="Contact Us"
-        description="Got an idea? Contact VKS Film Production — call producer S. Vijay Krishnan on +91 90876 15708, email or WhatsApp."
-        path="/contact"
-      />
+      <Seo path="/contact" />
       <PageHero
         compact
         eyebrow="Let's connect"

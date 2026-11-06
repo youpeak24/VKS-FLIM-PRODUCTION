@@ -27,7 +27,7 @@ const TermsConditions = lazy(pages.terms)
 function NotFound() {
   return (
     <section className="container-x grid min-h-[100svh] w-full place-content-center py-32 text-center">
-      <Seo title="Page not found" description="This page could not be found." noindex />
+      <Seo path="/__not-found" noindex />
       <p className="eyebrow text-cyan">Error 404</p>
       <h1 className="display-xl mt-6">Scene not found.</h1>
       <p className="lede mx-auto mt-6">The page you were looking for isn&rsquo;t part of this production.</p>

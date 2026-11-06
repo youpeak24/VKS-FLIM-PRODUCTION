@@ -205,7 +205,7 @@ const sections = [
 export default function PrivacyPolicy() {
   return (
     <>
-      <Seo title="Privacy Policy" description={`How ${name} handles information shared through this website, email, phone and WhatsApp.`} path="/privacy-policy" />
+      <Seo path="/privacy-policy" />
       <LegalLayout eyebrow="Legal" title="Privacy Policy" sections={sections} />
     </>
   )

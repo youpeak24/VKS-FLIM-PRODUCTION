@@ -10,7 +10,7 @@ const files = import.meta.glob('../../assets/branding/logo.{svg,png,webp,avif,jp
   eager: true,
   import: 'default',
 })
-const officialLogo = Object.values(files)[0] || '/2/android-chrome-512x512.png'
+const officialLogo = Object.values(files)[0] || '/2/android-chrome-192x192.png' // 192px is plenty for a 48–96px logo (the 512px file is 6× heavier)
 
 const heights = { sm: 'h-9', md: 'h-12', lg: 'h-20 md:h-24' }
 
@@ -20,6 +20,9 @@ export default function BrandLogo({ size = 'md', className = '' }) {
       <img
         src={officialLogo}
         alt={siteConfig.legalName}
+        width="192"
+        height="192"
+        decoding="async"
         className={`${heights[size]} w-auto object-contain ${className}`}
       />
     )

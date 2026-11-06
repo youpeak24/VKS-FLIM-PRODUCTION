@@ -258,11 +258,7 @@ function Principles() {
 export default function About() {
   return (
     <>
-      <Seo
-        title="About Us"
-        description="Discover the creative vision and passion behind VKS Film Production, and meet producer S. Vijay Krishnan."
-        path="/about"
-      />
+      <Seo path="/about" />
       <PageHero
         eyebrow="Behind the vision"
         lines={[

@@ -257,11 +257,7 @@ export default function Services() {
 
   return (
     <div ref={root}>
-      <Seo
-        title="Services"
-        description="Film production, creative direction, cinematography, post-production, promotional films and visual storytelling — explore the creative expertise of VKS Film Production."
-        path="/services"
-      />
+      <Seo path="/services" />
       <PageHero
         eyebrow="Our creative expertise"
         lines={[
