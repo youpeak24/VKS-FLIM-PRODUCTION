@@ -1,4 +1,5 @@
-# https://vksflims.com — crawling rules
+# https://vksflims.com/robots.txt
+# Everything public is crawlable (including /assets/ — Google needs the JS and CSS to render pages).
 User-agent: *
 Allow: /
 Disallow: /api/

@@ -210,6 +210,14 @@ export function seoPlugin() {
       },
     },
 
+    // Dev server: serve the same sitemap.xml that the build emits, so /sitemap.xml is reachable locally too.
+    configureServer(server) {
+      server.middlewares.use('/sitemap.xml', (_req, res) => {
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8')
+        res.end(sitemapXml())
+      })
+    },
+
     // Build only: runs after every file is on disk, so hashed asset names are known.
     writeBundle(options, bundle) {
       const outDir = options.dir ?? 'dist'
@@ -234,6 +242,12 @@ export function seoPlugin() {
       write('404.html', render(null, getSeo('/__not-found')))
 
       write('sitemap.xml', sitemapXml())
+
+      // Vercel preview deployments (*.vercel.app) must never be indexed — they would duplicate the real site.
+      // Production keeps the static public/robots.txt.
+      if (process.env.VERCEL_ENV === 'preview') {
+        write('robots.txt', 'User-agent: *\nDisallow: /\n')
+      }
     },
   }
 }
