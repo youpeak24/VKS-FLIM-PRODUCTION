@@ -76,7 +76,7 @@ Copy `.env.example` to `.env`. The variable is optional.
 
 ## Deployment
 
-The site is a React SPA, but the build pre-generates one static HTML file per route (plus `404.html`), so any static host works. Host configuration for clean URLs, the `www` -> apex redirect and a true 404 is included:
+The site is a React SPA, but the build pre-generates one static HTML file per route (plus `404.html`), so any static host works. Host configuration for clean URLs, the apex -> `www` redirect and a true 404 is included:
 
 | Host                         | File                                    |
 | ---------------------------- | --------------------------------------- |
@@ -84,7 +84,7 @@ The site is a React SPA, but the build pre-generates one static HTML file per ro
 | Vercel                       | `vercel.json`                           |
 | Apache / cPanel shared hosting | `public/.htaccess` (copied into `dist/`) |
 
-For Nginx, use `try_files $uri $uri.html $uri/index.html =404;` with `error_page 404 /404.html;` (each route is a real static file, so unknown URLs return a true 404) and 301-redirect `www` to the apex domain.
+For Nginx, use `try_files $uri $uri.html $uri/index.html =404;` with `error_page 404 /404.html;` (each route is a real static file, so unknown URLs return a true 404) and 301-redirect the bare `vksflim.com` to `www.vksflim.com`.
 
 Steps:
 
@@ -94,7 +94,7 @@ Steps:
 
 ## SEO
 
-The domain is fixed to `https://vksflims.com` (apex, no `www`) in `src/data/company.js`.
+The domain is fixed to `https://www.vksflim.com` (the `www` host is canonical; bare `vksflim.com` redirects to it) in `src/data/company.js`. Sitemap URLs must be on the same host as the sitemap, so change it only there.
 
 `npm run build` post-processes the SPA (`scripts/vite-seo-plugin.js`) so every route is its own static HTML file
 (`dist/about/index.html`, …) containing its own title, description, canonical, Open Graph / Twitter tags,
@@ -129,7 +129,7 @@ python scripts/generate-artwork.py hero cta   # only matching recipes
 - [ ] Confirm the email address `vksfilm@mailproduction.com` is correct and monitored.
 - [ ] Have the Privacy Policy and Terms & Conditions reviewed. Resolve every `[Review: …]` note: legal entity, address, hosting provider, governing law, retention period.
 - [ ] Replace `public/og-image.jpg` with an approved social preview image that uses the official logo.
-- [ ] Submit `https://vksflims.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools (see the SEO section).
+- [ ] Submit `https://www.vksflim.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools (see the SEO section).
 - [ ] Set `showDraftNotices: false`.
 
 ## Project structure

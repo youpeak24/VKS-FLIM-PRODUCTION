@@ -1,7 +1,7 @@
-# https://vksflims.com/robots.txt
+# https://www.vksflim.com/robots.txt
 # Everything public is crawlable (including /assets/ — Google needs the JS and CSS to render pages).
 User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://vksflims.com/sitemap.xml
+Sitemap: https://www.vksflim.com/sitemap.xml

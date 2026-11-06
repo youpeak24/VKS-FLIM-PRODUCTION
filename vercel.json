@@ -10,8 +10,8 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.vksflims.com" }],
-      "destination": "https://vksflims.com/$1",
+      "has": [{ "type": "host", "value": "vksflim.com" }],
+      "destination": "https://www.vksflim.com/$1",
       "permanent": true
     }
   ],

@@ -1,4 +1,4 @@
 # Netlify (only used if the site is NOT hosted on Vercel).
 # Every route has its own static file, and Netlify serves /404.html with a 404 status for unknown URLs,
 # so no catch-all rewrite is needed (a catch-all would turn every bad URL into a soft-404).
-https://www.vksflims.com/*  https://vksflims.com/:splat  301!
+https://vksflim.com/*  https://www.vksflim.com/:splat  301!

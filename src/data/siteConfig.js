@@ -13,7 +13,7 @@ export const siteConfig = {
   tagline: company.tagline,
   description: company.description,
 
-  /** Production domain (https://vksflims.com), no trailing slash. */
+  /** Production domain (https://www.vksflim.com), no trailing slash. */
   siteUrl: SITE_URL,
 
   producer: company.producer,

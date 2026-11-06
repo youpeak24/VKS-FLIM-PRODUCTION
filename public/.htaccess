@@ -8,10 +8,10 @@ DirectorySlash Off
   RewriteEngine On
   RewriteBase /
 
-  # One canonical origin: https://vksflims.com (no www)
+  # One canonical origin: https://www.vksflim.com
   RewriteCond %{HTTPS} off [OR]
-  RewriteCond %{HTTP_HOST} ^www\. [NC]
-  RewriteRule ^ https://vksflims.com%{REQUEST_URI} [R=301,L]
+  RewriteCond %{HTTP_HOST} !^www\.vksflim\.com$ [NC]
+  RewriteRule ^ https://www.vksflim.com%{REQUEST_URI} [R=301,L]
 
   # /about/ -> /about (and /index.html -> /)
   RewriteRule ^index\.html$ / [R=301,L]

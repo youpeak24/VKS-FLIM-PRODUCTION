@@ -2,13 +2,13 @@
 // SEO plugin (vite.config.js), so the same facts feed the UI, <head>, JSON-LD and sitemap.
 
 /** Production domain. Canonical, Open Graph, sitemap and JSON-LD URLs all derive from this. */
-export const SITE_URL = 'https://vksflims.com'
+export const SITE_URL = 'https://www.vksflim.com'
 
 export const company = {
   name: 'VKS Film Production',
   legalName: 'VKS FILM PRODUCTION',
   /** Other names people use when searching for the brand (incl. the domain's spelling). */
-  alternateNames: ['VKS Films', 'VKS Flims'],
+  alternateNames: ['VKS Films', 'VKS Flim'],
   tagline: 'Creating Magic on Screen',
   description:
     'VKS Film Production brings powerful ideas, captivating visuals and creative storytelling together to create unforgettable cinematic experiences.',
